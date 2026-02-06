@@ -1,0 +1,19 @@
+
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres:15
+    container_name: postgresql
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: fast
+      POSTGRES_PASSWORD: fast123
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
