@@ -1,21 +1,13 @@
-import { IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
 export class createActividadDto {
-  @IsString()
-  nombre: string;
-
+  @ApiProperty({})
   @IsString()
   deporte: string;
 
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
-  dias: string;
-
-  @IsString()
-  horarios: string;
-
-  @IsNumber()
-  precioMensual: number;
-
-  @IsNumber()
-  profesorId: number;
+  descripcion?: string;
 }

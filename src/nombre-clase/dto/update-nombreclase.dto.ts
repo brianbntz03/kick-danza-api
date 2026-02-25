@@ -1,8 +1,4 @@
-export class UpdateNombreClaseDto {
-  nombre?: string;
-  actividad?: string;
-  profesorId?: number;
-  nivel?: string;
-  duracion?: number;
-  descripcion?: string;
-}
+import { PartialType } from '@nestjs/swagger';
+import { CreateNombreClaseDto } from './create-nombreclase.dto';
+
+export class UpdateNombreClaseDto extends PartialType(CreateNombreClaseDto) {}

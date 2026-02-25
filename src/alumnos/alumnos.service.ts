@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Alumnos, AlumnosStatus } from './alumnos.entity';
+import { Alumnos } from './entity/alumnos.entity';
+import { CreateAlumnosDto } from './dto/create-alumnos.dto';
+import { UpdateAlumnoDto } from './dto/update-alumnos.dto';
 
 @Injectable()
 export class AlumnosService {
@@ -10,27 +12,37 @@ export class AlumnosService {
     private alumnosRepository: Repository<Alumnos>,
   ) {}
 
-  async getAllAlumnos(): Promise<Alumnos[]> {
+  async findAll(): Promise<Alumnos[]> {
     return this.alumnosRepository.find();
   }
 
-  async createAlumnos(nombre: string, descripcion: string): Promise<Alumnos> {
+  async create(dto: CreateAlumnosDto): Promise<Alumnos> {
     const alumno = this.alumnosRepository.create({
-      nombre,
-      descripcion,
-      status: AlumnosStatus.PENDING,
+      nombre: dto.nombre,
+      dni: dto.dni,
+      telefono: dto.telefono,
+      fechaNacimiento: dto.fechaNacimiento,
+      fechaInscripcion: dto.fechaInscripcion,
     });
     return this.alumnosRepository.save(alumno);
   }
 
-  async updateAlumnos(id: string, nombre: string, descripcion: string): Promise<Alumnos | null> {
-    const numericId = parseInt(id);
-    await this.alumnosRepository.update(numericId, { nombre, descripcion });
-    return this.alumnosRepository.findOne({ where: { id: numericId } });
+  async update(id: number, dto: UpdateAlumnoDto): Promise<Alumnos | null> {
+    await this.alumnosRepository.update(id, {
+      nombre: dto.nombre,
+      dni: dto.dni,
+      telefono: dto.telefono,
+      fechaNacimiento: dto.fechaNacimiento,
+      fechaInscripcion: dto.fechaInscripcion,
+    });
+    return this.alumnosRepository.findOne({ where: { id } });
   }
 
-  async deleteAlumnos(id: string): Promise<void> {
-    const numericId = parseInt(id);
-    await this.alumnosRepository.delete(numericId);
+  async delete(id: number): Promise<void> {
+    const result = await this.alumnosRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException('clase no encontrada');
+    }
   }
 }

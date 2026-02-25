@@ -6,13 +6,13 @@ import { CreatePagoDto } from './dto/create-pagos.dto';
 export class PagosController {
   constructor(private readonly pagosService: PagosService) {}
 
-  @Post()
-  crear(@Body() dto: CreatePagoDto) {
-    return this.pagosService.crearPago(dto);
-  }
-
   @Get()
   getAll() {
     return this.pagosService.getPagos();
+  }
+
+  @Post()
+  crear(@Body() dto: CreatePagoDto) {
+    return this.pagosService.crearPago(dto);
   }
 }

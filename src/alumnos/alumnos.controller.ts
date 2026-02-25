@@ -4,70 +4,35 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { AlumnosService } from './alumnos.service';
+import { CreateAlumnosDto } from './dto/create-alumnos.dto';
+import { UpdateAlumnoDto } from './dto/update-alumnos.dto';
 
-@ApiTags('alumnos')
 @Controller('alumnos')
 export class AlumnosController {
-  constructor(private alumnosService: AlumnosService) {}
+  constructor(private readonly alumnosService: AlumnosService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los alumnos' })
-  getAllAlumnos() {
-    return this.alumnosService.getAllAlumnos();
+  findAll() {
+    return this.alumnosService.findAll();
   }
 
   @Post()
-  @ApiOperation({ summary: 'Crear un nuevo alumno' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        nombre: { type: 'string', example: 'Juan Pérez' },
-        descripcion: { type: 'string', example: 'Estudiante de danza' }
-      },
-      required: ['nombre', 'descripcion']
-    }
-  })
-  createAlumno(@Body() body: { nombre: string; descripcion: string }) {
-    console.log('POST /alumnos - Body:', body);
-    
-    if (!body || !body.nombre || !body.descripcion) {
-      throw new Error('Nombre y descripción son requeridos');
-    }
-    
-    return this.alumnosService.createAlumnos(body.nombre, body.descripcion);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar un alumno' })
-  deleteAlumno(@Param('id') id: string) {
-    return this.alumnosService.deleteAlumnos(id);
+  create(@Body() dto: CreateAlumnosDto) {
+    return this.alumnosService.create(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar un alumno' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        nombre: { type: 'string', example: 'Juan Pérez' },
-        descripcion: { type: 'string', example: 'Estudiante de danza' }
-      }
-    }
-  })
-  updateAlumno(
-    @Param('id') id: string,
-    @Body() body: { nombre?: string; descripcion?: string },
-  ) {
-    return this.alumnosService.updateAlumnos(
-      id,
-      body.nombre || '',
-      body.descripcion || '',
-    );
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateAlumnoDto) {
+    return this.alumnosService.update(id, dto);
+  }
+
+  @Delete(':id')
+  deleteAlumno(@Param('id', ParseIntPipe) id: number) {
+    return this.alumnosService.delete(id);
   }
 }

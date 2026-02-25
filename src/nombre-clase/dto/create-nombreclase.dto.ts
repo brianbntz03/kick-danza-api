@@ -1,8 +1,15 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class CreateNombreClaseDto {
+  @ApiProperty({})
   nombre: string;
-  actividad: string;
-  profesorId: number;
-  nivel: string;
-  duracion: number;
+
+  @ApiProperty({})
+  actividad: number;
+
+  @ApiProperty({})
   descripcion: string;
+
+  @ApiProperty({})
+  profesorId: number;
 }

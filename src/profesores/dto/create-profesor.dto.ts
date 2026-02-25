@@ -1,13 +1,37 @@
-import { IsString, MinLength } from "class-validator";
+// create-profesor.dto.ts
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsOptional, IsNumber, IsPositive, IsString } from 'class-validator';
 
 export class CreateProfesorDto {
-    @IsString()
-    @MinLength(2)
-    nombre: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  nombre: string;
 
-    @IsString()
-    telefono: string;
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  telefono?: string;
 
-    @IsString()
-    especialidad: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  dni: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  actividadId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  nombreclaseId: number;
 }

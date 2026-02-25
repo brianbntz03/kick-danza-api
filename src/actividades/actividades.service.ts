@@ -1,47 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Actividad } from './entity/actividad.entity';
+import { Repository } from 'typeorm';
+import { createActividadDto } from './dto/create-actividad.dto';
+import { UpdateActividadDto } from './dto/update-actividad.to';
 
 @Injectable()
 export class ActividadesService {
-  private actividades = [
-    {
-      id: 1,
-      nombre: 'Danza Clásica',
-      descripcion: 'Ballet clásico',
-      profesorId: 1,
-    },
-    {
-      id: 2,
-      nombre: 'Danza Moderna',
-      descripcion: 'Danza contemporánea',
-      profesorId: 2,
-    },
-  ];
+  constructor(
+    @InjectRepository(Actividad)
+    private actividadesRepository: Repository<Actividad>,
+  ) {}
 
-  findAll() {
-    return this.actividades;
+  async findAll(): Promise<Actividad[]> {
+    return this.actividadesRepository.find();
   }
 
-  create(dto: any) {
-    const actividad = {
-      id: this.actividades.length + 1,
-      ...dto,
-    };
-    this.actividades.push(actividad);
-    return actividad;
+  async create(createdto: createActividadDto): Promise<Actividad> {
+    const actividadNueva = this.actividadesRepository.create({
+      deporte: createdto.deporte,
+      descripcion: createdto.descripcion,
+    });
+
+    return await this.actividadesRepository.save(actividadNueva);
   }
 
-  update(id: number, dto: any) {
-    const actividad = this.actividades.find((a) => a.id === id);
-    if (!actividad) return null;
+  async update(id: number, updatedto: UpdateActividadDto): Promise<Actividad> {
+    const actividad = await this.actividadesRepository.findOne({
+      where: { id },
+    });
 
-    Object.assign(actividad, dto);
-    return actividad;
+    if (!actividad) {
+      throw new NotFoundException('clase no encontrada');
+    }
+
+    Object.assign(actividad, updatedto);
+    return this.actividadesRepository.save(actividad);
   }
 
-  remove(id: number) {
-    const index = this.actividades.findIndex((a) => a.id === id);
-    if (index === -1) return;
+  async remove(id: number): Promise<void> {
+    const result = await this.actividadesRepository.delete(id);
 
-    this.actividades.splice(index, 1);
+    if (result.affected === 0) {
+      throw new NotFoundException('clase no encontrada');
+    }
   }
 }

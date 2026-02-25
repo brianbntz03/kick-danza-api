@@ -1,7 +1,22 @@
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, MinLength } from 'class-validator';
+
+
+export enum TipoPago {
+  MENSUAL = 'MENSUAL',
+  CLASE = 'CLASE',
+}
 export class CreateAsistenciaDto {
-    alumnoId: number;
-    claseId: number;
-    pago: boolean;
-    tipoPago?: 'MENSUAL' | 'CLASE';
-    observacion?: string;
+  @IsNumber()
+  alumnoId: number;
+
+  @IsNumber()
+  claseId: number;
+
+  @IsOptional()
+  @IsBoolean()
+  pago: boolean;
+
+  @IsOptional()
+  @IsEnum(TipoPago)
+  tipoPago?: TipoPago;
 }

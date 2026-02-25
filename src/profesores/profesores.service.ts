@@ -1,37 +1,103 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Profesores } from './entity/profesores.entity';
+import { CreateProfesorDto } from './dto/create-profesor.dto';
+import { UpdateProfesorDto } from './dto/update-profesor.dto';
+import { Actividad } from 'src/actividades/entity/actividad.entity';
+import { NombreClase } from 'src/nombre-clase/entity/nombre-clase.entity';
 
 @Injectable()
 export class ProfesoresService {
-  private profesores = [
-    { id: 1, nombre: 'Ana García', especialidad: 'Ballet Clásico', email: 'ana@danza.com' },
-    { id: 2, nombre: 'Carlos López', especialidad: 'Danza Moderna', email: 'carlos@danza.com' }
-  ];
+  constructor(
+    @InjectRepository(Profesores)
+    private readonly profesoresRepository: Repository<Profesores>,
+  ) {}
 
-  findAll() {
-    return this.profesores;
+  async findAll(): Promise<Profesores[]> {
+    return this.profesoresRepository.find({
+      where: { activo: true },
+      relations: ['actividad', 'nombreclase'],
+    });
   }
 
-  create(dto: any) {
-    const profesor = {
-      id: this.profesores.length + 1,
-      ...dto
-    };
-    this.profesores.push(profesor);
-    return profesor;
+  async create(dto: CreateProfesorDto): Promise<Profesores> {
+    const profesor = this.profesoresRepository.create({
+      nombre: dto.nombre,
+      telefono: dto.telefono,
+      email: dto.email,
+      dni: dto.dni,
+      activo: true,
+    });
+
+    // Relación Actividad
+    const actividad = await this.profesoresRepository.manager.findOne(
+      Actividad,
+      {
+        where: { id: dto.actividadId },
+      },
+    );
+    if (!actividad) throw new NotFoundException('Actividad no encontrada');
+    profesor.actividad = actividad;
+
+    // Relación NombreClase
+    const nombreclase = await this.profesoresRepository.manager.findOne(
+      NombreClase,
+      {
+        where: { id: dto.nombreclaseId },
+      },
+    );
+    if (!nombreclase) throw new NotFoundException('NombreClase no encontrada');
+    profesor.nombreclase = nombreclase;
+
+    return this.profesoresRepository.save(profesor);
   }
 
-  update(id: number, dto: any) {
-    const profesor = this.profesores.find(p => p.id === id);
-    if (!profesor) return null;
-    
-    Object.assign(profesor, dto);
-    return profesor;
+  async update(id: number, dto: UpdateProfesorDto): Promise<Profesores> {
+    const profesor = await this.profesoresRepository.findOne({
+      where: { id },
+      relations: ['actividad', 'nombreclase'],
+    });
+    if (!profesor) throw new NotFoundException('Profesor no encontrado');
+
+    if (dto.actividadId) {
+      const actividad = await this.profesoresRepository.manager.findOne(
+        Actividad,
+        {
+          where: { id: dto.actividadId },
+        },
+      );
+      if (!actividad) throw new NotFoundException('Actividad no encontrada');
+      profesor.actividad = actividad;
+    }
+
+    if (dto.nombreclaseId) {
+      const nombreclase = await this.profesoresRepository.manager.findOne(
+        NombreClase,
+        {
+          where: { id: dto.nombreclaseId },
+        },
+      );
+      if (!nombreclase)
+        throw new NotFoundException('NombreClase no encontrada');
+      profesor.nombreclase = nombreclase;
+    }
+
+    Object.assign(profesor, {
+      nombre: dto.nombre ?? profesor.nombre,
+      telefono: dto.telefono ?? profesor.telefono,
+      email: dto.email ?? profesor.email,
+      dni: dto.dni ?? profesor.dni,
+    });
+
+    return this.profesoresRepository.save(profesor);
   }
 
-  remove(id: number) {
-    const index = this.profesores.findIndex(p => p.id === id);
-    if (index === -1) return;
-    
-    this.profesores.splice(index, 1);
+  async remove(id: number): Promise<void> {
+    const profesor = await this.profesoresRepository.findOne({ where: { id } });
+    if (!profesor) throw new NotFoundException('Profesor no encontrado');
+
+    profesor.activo = false;
+    await this.profesoresRepository.save(profesor);
   }
 }

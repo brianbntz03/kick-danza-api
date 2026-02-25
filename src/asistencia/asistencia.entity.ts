@@ -1,5 +1,5 @@
-import { Alumnos } from 'src/alumnos/alumnos.entity';
-import { NombreClase } from 'src/nombre-clase/nombre-clase.entity';
+import { Alumnos } from 'src/alumnos/entity/alumnos.entity';
+import { NombreClase } from 'src/nombre-clase/entity/nombre-clase.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -11,9 +11,9 @@ export class Asistencia {
   alumno: Alumnos;
 
   @ManyToOne(() => NombreClase, { eager: true })
-  nombreClase: NombreClase;
+  clase: NombreClase;
 
-  @Column({ type: 'date'})
+  @Column({ type: 'date' })
   fecha: string;
 
   @Column({ default: true })

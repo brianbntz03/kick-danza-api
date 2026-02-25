@@ -10,8 +10,10 @@ async function bootstrap() {
   app.enableCors();
 
   const config = new DocumentBuilder()
-    .setTitle('Ejemplo de API')
-    .setDescription('La descripción de la API')
+    .setTitle('Kickboxing - Danza API')
+    .setDescription(
+      ' api de nombre de clases, tipos de actividades, profesores, alumnos y asistencia ',
+    )
     .setVersion('1.0')
     .addTag('alumnos')
     .build();

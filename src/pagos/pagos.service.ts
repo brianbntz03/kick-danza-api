@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePagoDto } from './dto/create-pagos.dto';
 import { Pagos, TipoPago } from './pagos.entity';
-import { Alumnos } from 'src/alumnos/alumnos.entity';
-import { Actividad } from 'src/actividades/actividad.entity';
+import { Alumnos } from 'src/alumnos/entity/alumnos.entity';
+import { Actividad } from 'src/actividades/entity/actividad.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NombreClase } from 'src/nombre-clase/nombre-clase.entity';
+import { NombreClase } from 'src/nombre-clase/entity/nombre-clase.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -17,46 +17,44 @@ export class PagosService {
   ) {}
 
   async crearPago(dto: CreatePagoDto) {
-    const alumno = await this.alumnoRepo.findOneBy({ id: dto.alumnoId });
-    if (!alumno) throw new NotFoundException('Alumno no existe');
+    const alumnoId = await this.alumnoRepo.findOneBy({ id: dto.alumnoId });
+    if (!alumnoId) throw new NotFoundException('Alumno no existe');
 
     const pago = this.pagoRepo.create({
-      alumno,
-      tipos: dto.tipo as TipoPago,
+      alumnoId,
+      tipo: dto.tipo as TipoPago,
       monto: dto.monto,
-      fechaPago: new Date().toISOString().split('T')[0],
     });
 
-    if (dto.tipo === 'MENSUAL') {
-      if (dto.mes === undefined || dto.año === undefined || !dto.actividadId) {
+    if (dto.tipo === TipoPago.MENSUAL) {
+      if (dto.mes || dto.año || !dto.actividadId) {
         throw new NotFoundException('Datos incompletos para el pago mensual');
       }
 
       const actividad = await this.actividadRepo.findOneBy({
         id: dto.actividadId,
       });
-      if (!actividad) {
-        throw new NotFoundException('Actividad no encontrada');
-      }
+
+      if (!actividad) throw new NotFoundException('Actividad no encontrada');
 
       pago.mes = dto.mes;
       pago.año = dto.año;
-      pago.actividad = actividad;
+      pago.actividadId = actividad;
     }
 
-    if (dto.tipo === 'CLASE') {
+    if (dto.tipo === TipoPago.CLASE) {
       if (!dto.claseId) throw new NotFoundException('Clase requerida');
 
       const clase = await this.claseRepo.findOneBy({ id: dto.claseId });
       if (!clase) throw new NotFoundException('clase no encontrada');
 
-      pago.clases = clase;
+      pago.clase = clase;
     }
 
     return this.pagoRepo.save(pago);
   }
 
-  getPagos() {
+  async getPagos() {
     return this.pagoRepo.find();
   }
 }

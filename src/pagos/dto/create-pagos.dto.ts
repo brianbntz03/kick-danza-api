@@ -1,11 +1,27 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class CreatePagoDto {
+  @ApiProperty()
   alumnoId: number;
+
+  @ApiProperty()
   tipo: 'MENSUAL' | 'CLASE';
+
+  @ApiProperty()
   monto: number;
 
-  mes?: number;
-  año?: number;
-  actividadId?: number;
+  @ApiProperty()
+  fecha: Date;
 
-  claseId?: number;
+  @ApiProperty()
+  mes: number;
+
+  @ApiProperty()
+  año: number;
+
+  @ApiProperty()
+  actividadId: number;
+
+  @ApiProperty()
+  claseId: number;
 }
