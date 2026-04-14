@@ -6,7 +6,6 @@ import { AppController } from './app.controller';
 import { ActividadesModule } from './actividades/actividades.module';
 import { ProfesoresModule } from './profesores/profesores.module';
 import { NombreClaseModule } from './nombre-clase/nombre-clase.module';
-import { AsistenciaModule } from './asistencia/asistencia.module';
 import { PagosModule } from './pagos/pagos.module';
 
 @Module({
@@ -26,7 +25,6 @@ import { PagosModule } from './pagos/pagos.module';
     ActividadesModule,
     ProfesoresModule,
     NombreClaseModule,
-    AsistenciaModule,
     PagosModule,
     UsersModule,
   ],

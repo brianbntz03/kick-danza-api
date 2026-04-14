@@ -26,7 +26,6 @@ export class ProfesoresService {
       nombre: dto.nombre,
       telefono: dto.telefono,
       email: dto.email,
-      dni: dto.dni,
       activo: true,
     });
 
@@ -87,7 +86,6 @@ export class ProfesoresService {
       nombre: dto.nombre ?? profesor.nombre,
       telefono: dto.telefono ?? profesor.telefono,
       email: dto.email ?? profesor.email,
-      dni: dto.dni ?? profesor.dni,
     });
 
     return this.profesoresRepository.save(profesor);

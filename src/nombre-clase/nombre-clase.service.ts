@@ -23,7 +23,6 @@ export class NombreClaseService {
 
     const nuevaClase = this.nombreClaseRepository.create({
       nombre: createDto.nombre,
-      descripcion: createDto.descripcion,
       actividad: { id: createDto.actividad } as any,
       profesor: { id: createDto.profesorId } as any,
     });
@@ -54,10 +53,6 @@ export class NombreClaseService {
 
     if (updatedto.nombre !== undefined) {
       clase.nombre = updatedto.nombre;
-    }
-
-    if (updatedto.descripcion !== undefined) {
-      clase.descripcion = updatedto.descripcion;
     }
 
     return this.nombreClaseRepository.save(clase);

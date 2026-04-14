@@ -8,8 +8,5 @@ export class CreateNombreClaseDto {
   actividad: number;
 
   @ApiProperty({})
-  descripcion: string;
-
-  @ApiProperty({})
   profesorId: number;
 }

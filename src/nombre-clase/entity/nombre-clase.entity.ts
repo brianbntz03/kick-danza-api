@@ -23,9 +23,6 @@ export class NombreClase {
   })
   actividad: Actividad;
 
-  @Column()
-  descripcion: string;
-
   @ManyToOne(() => Profesores)
   @JoinColumn({ name: 'profesorId' })
   profesor: Profesores;

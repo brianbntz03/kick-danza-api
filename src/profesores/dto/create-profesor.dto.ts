@@ -20,11 +20,6 @@ export class CreateProfesorDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  dni: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
   @IsNumber()
   @IsPositive()
   actividadId: number;
