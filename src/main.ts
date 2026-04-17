@@ -8,10 +8,7 @@ async function bootstrap() {
 
   // Habilitar parsing de JSON globalmente
   app.enableCors({
-    origin: [
-      'https://tu-sitio-en-netlify.netlify.app',
-      'http://localhost:3000',
-    ],
+    origin: ['https://kick-front-pag.netlify.app/', 'http://localhost:3000'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
