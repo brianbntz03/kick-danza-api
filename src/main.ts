@@ -7,7 +7,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Habilitar parsing de JSON globalmente
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      'https://tu-sitio-en-netlify.netlify.app',
+      'http://localhost:3000',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Kickboxing - Danza API')
